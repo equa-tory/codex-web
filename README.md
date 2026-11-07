@@ -26,13 +26,13 @@ For a persistent service, stop any manual listener first and run:
 
 ```sh
 ./scripts/install-service.sh
-systemctl --user status codex-web
-systemctl --user restart codex-web
-systemctl --user stop codex-web
-journalctl --user -u codex-web -f
+sudo systemctl status codex-web
+sudo systemctl restart codex-web
+sudo systemctl stop codex-web
+sudo journalctl -u codex-web -f
 ```
 
-The installer checks port 8771 immediately before installing a service for the current checkout. `codex-web.service` is the delivered service for `/home/equa/git/codex-web`. The service restarts on failure. User lingering must be enabled for operation after logout (`loginctl show-user "$USER" -p Linger`); it is already enabled on the delivery machine.
+The installer installs the service in `/etc/systemd/system/codex-web.service`, disables the old user service, enables startup at boot, and restarts it. It requires sudo and runs the application as your regular user. `codex-web.service` is the delivered service for `/home/equa/git/codex-web`. The service restarts on failure. The system service starts at boot and does not depend on user login or lingering.
 
 ## Chat controls
 
