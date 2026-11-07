@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#101716" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="Codex" />
+    <meta
+      name="description"
+      content="Your local Codex sessions, on your phone."
+    />
+    <title>Codex · Phone</title>
+    <link rel="manifest" href="/static/manifest.webmanifest" />
+    <link rel="icon" href="/static/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/static/icon-192.png" />
+    <link rel="stylesheet" href="/static/style.css" />
+    <script defer src="/static/vendor/marked.min.js"></script>
+    <script defer src="/static/vendor/purify.min.js"></script>
+    <script defer src="/static/app.js"></script>
+  </head>
+  <body>
+    <section id="login" class="login" hidden>
+      <div class="brand-mark">⌘</div>
+      <p class="eyebrow">YOUR WORKSPACE, WITH YOU</p>
+      <h1>Codex for phone</h1>
+      <p class="muted">Sign in to your local Codex workspace.</p>
+      <form id="loginForm">
+        <label for="password">Workspace password</label
+        ><input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          required
+        /><button class="primary" type="submit">
+          Unlock workspace <span>↗</span>
+        </button>
+        <p id="loginError" role="alert"></p>
+      </form>
+      <p class="footnote">
+        A private window into the Codex running on your computer.
+      </p>
+    </section>
+    <main id="app" hidden>
+      <aside id="browser">
+        <header class="browser-head">
+          <div class="wordmark">
+            <span class="brand-mini">⌘</span> Codex
+            <span class="tag">PHONE</span>
+          </div>
+          <button id="new" class="primary" aria-label="New session">
+            ＋ New
+          </button>
+        </header>
+        <p id="browserConnection" role="status" hidden></p>
+        <div class="session-intro">
+          <p class="eyebrow">WORKSPACE</p>
+          <h1>Your sessions<span class="accent">.</span></h1>
+          <p class="muted">Pick up where you left off.</p>
+        </div>
+        <div class="search-wrap">
+          <span>⌕</span
+          ><input
+            id="search"
+            type="search"
+            placeholder="Search title or full path"
+            aria-label="Search sessions"
+          />
+        </div>
+        <div class="list-bar">
+          <span id="listLabel">RECENT ACTIVITY</span
+          ><label class="archive"
+            ><input type="checkbox" id="archived" /> Archived</label
+          >
+        </div>
+        <div id="sessions" class="sessions"></div>
+        <button id="moreSessions" class="wide" hidden>
+          Load more sessions
+        </button>
+        <footer class="browser-footer">
+          <button id="homeHelp">Add to Home Screen</button
+          ><button id="logout">Sign out</button>
+        </footer>
+      </aside>
+      <section id="chat" hidden>
+        <header class="chat-head">
+          <button id="back" class="icon-button" aria-label="Back to sessions">
+            ‹
+          </button>
+          <div class="chat-heading">
+            <h2 id="title">Session</h2>
+            <p id="cwd"></p>
+          </div>
+          <span id="status" class="pill">Ready</span>
+        </header>
+        <div id="connection" role="status" hidden></div>
+        <div id="conversation" tabindex="0" aria-label="Conversation">
+          <button id="older" class="wide" hidden>Load earlier messages</button>
+          <div id="messages"></div>
+          <div id="empty" class="empty" hidden>
+            <span>⌘</span>
+            <h2>A little space to think.</h2>
+            <p>Send a message to start working with Codex.</p>
+          </div>
+        </div>
+        <div id="pending" aria-live="polite"></div>
+        <div class="composer-wrap">
+          <div id="notice" role="status" hidden></div>
+          <div id="actionsMenu" class="popover" hidden>
+            <p class="eyebrow">NEXT TURN</p>
+            <div class="segmented">
+              <button id="codeMode">Code</button
+              ><button id="planMode">Plan</button>
+            </div>
+            <button id="returnMessage">↶ Return to message</button>
+            <p class="footnote">
+              Return changes chat history. Project files stay as they are.
+            </p>
+          </div>
+          <div id="slashPicker" class="popover" hidden></div>
+          <p id="archivedNote" class="footnote" hidden>
+            This session is archived. Unarchive it to continue.
+          </p>
+          <form id="composer">
+            <textarea
+              id="message"
+              rows="2"
+              placeholder="Ask Codex anything…"
+              aria-label="Message"
+            ></textarea>
+            <div class="composer-tools">
+              <button type="button" id="actions" aria-expanded="false">
+                ☷ Actions</button
+              ><button type="button" id="slash" aria-label="Commands">/</button
+              ><span id="modeLabel" class="mode-label">Code</span
+              ><span class="spacer"></span
+              ><button type="button" id="stop" class="danger" hidden>
+                ■ Stop</button
+              ><button id="unarchive" class="primary" type="button" hidden>
+                Unarchive
+              </button>
+              <button id="send" class="primary" type="submit">Send ↑</button>
+            </div>
+          </form>
+          <div class="composer-meta">
+            <button id="modelLabel">Model</button
+            ><span>Runs on your computer</span>
+          </div>
+        </div>
+      </section>
+      <section id="welcome">
+        <div class="brand-mark">⌘</div>
+        <h1>Keep your work moving.</h1>
+        <p class="muted">Open a session or start something new.</p>
+      </section>
+    </main>
+    <dialog id="dialog">
+      <div class="dialog-head">
+        <h2 id="dialogTitle"></h2>
+        <button id="closeDialog" aria-label="Close dialog">✕</button>
+      </div>
+      <div id="dialogBody"></div>
+    </dialog>
+  </body>
+</html>

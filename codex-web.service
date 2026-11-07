@@ -1,0 +1,15 @@
+[Unit]
+Description=Codex Web for Phone
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/equa/git/codex-web
+ExecStart=/home/equa/git/codex-web/.venv/bin/uvicorn app:app --host 0.0.0.0 --port 8771 --timeout-graceful-shutdown 10
+Restart=always
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

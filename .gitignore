@@ -1,0 +1,15 @@
+.local/
+.venv/
+.env
+.env.*
+!.env.example
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.log
+*.sqlite*
+*.sock
+*.pid
+node_modules/
+test-results/
+playwright-report/
