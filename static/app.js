@@ -8,6 +8,7 @@ const el = (tag, cls, text) => {
 };
 const state = {
   archived: false,
+  activeOnly: false,
   csrf: "",
   installation: "",
   thread: null,
@@ -197,14 +198,19 @@ async function loadSessions(more = false) {
   const request = ++listRequest;
   const q = $("search").value;
   const result = await api(
-    `/threads?q=${encodeURIComponent(q)}&archived=${$("archived").checked}${more && state.sessionsCursor ? "&cursor=" + encodeURIComponent(state.sessionsCursor) : ""}`,
+    `/threads?q=${encodeURIComponent(q)}&archived=${$("archived").checked}&active=${state.activeOnly}${more && state.sessionsCursor ? "&cursor=" + encodeURIComponent(state.sessionsCursor) : ""}`,
   );
   if (request !== listRequest) return;
   if (!more) $("sessions").replaceChildren();
   state.sessionsCursor = result.nextCursor;
   $("moreSessions").hidden = !result.nextCursor;
   for (const thread of result.data) {
-    const b = button("", () => openThread(thread.id), "session");
+    const b = el("div", "session");
+    b.tabIndex = 0;
+    b.setAttribute("role", "button");
+    b.setAttribute("aria-label", `Open ${thread.name || thread.preview?.split("\n")[0] || "session"}`);
+    b.addEventListener("click", () => openThread(thread.id).catch(fail));
+    b.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); openThread(thread.id).catch(fail); } });
     b.classList.toggle("active", thread.id === state.thread?.id);
     b.append(
       el(
@@ -229,6 +235,14 @@ async function loadSessions(more = false) {
       el("span", "session-state", statusText(thread)),
     );
     b.append(meta);
+    if (thread.status?.type === "active") {
+      const stop = button("■ Stop", async () => {
+        await api(`/threads/${thread.id}/stop`, {});
+        await loadSessions();
+      }, "session-stop danger");
+      stop.addEventListener("click", (event) => event.stopPropagation());
+      b.append(stop);
+    }
     $("sessions").append(b);
   }
   if (!more && !result.data.length)
@@ -558,6 +572,9 @@ function setMode(mode) {
   saveSettings();
   $("actionsMenu").hidden = true;
   $("actions").setAttribute("aria-expanded", "false");
+}
+function toggleMode() {
+  setMode(state.mode === "plan" ? "default" : "plan");
 }
 async function chooseModel() {
   const opts = state.options || (await loadOptions());
@@ -1236,6 +1253,7 @@ on("actions", "click", () => {
 });
 on("codeMode", "click", () => setMode("default"));
 on("planMode", "click", () => setMode("plan"));
+on("modeLabel", "click", toggleMode);
 on("returnMessage", "click", returnToMessage);
 on("modelLabel", "click", chooseModel);
 on("slash", "click", showSlash);
@@ -1244,6 +1262,8 @@ on("stop", "click", async () => {
   scheduleRefresh();
 });
 on("moreSessions", "click", () => loadSessions(true));
+on("recentTab", "click", () => { state.activeOnly = false; $("recentTab").setAttribute("aria-selected", "true"); $("runningTab").setAttribute("aria-selected", "false"); $("archived").disabled = false; loadSessions(); });
+on("runningTab", "click", () => { state.activeOnly = true; $("recentTab").setAttribute("aria-selected", "false"); $("runningTab").setAttribute("aria-selected", "true"); $("archived").checked = false; $("archived").disabled = true; loadSessions(); });
 on("archived", "change", () => loadSessions());
 let searchTimer;
 on("search", "input", () => {

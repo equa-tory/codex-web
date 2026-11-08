@@ -253,11 +253,15 @@ async def options(cwd: str | None = None):
 
 
 @app.get('/api/threads')
-async def threads(q: str = '', archived: bool = False, cursor: str | None = None, limit: int = 25):
+async def threads(q: str = '', archived: bool = False, active: bool = False, cursor: str | None = None, limit: int = 25):
     limit = min(max(limit, 1), 100)
     # Daemon title search omits cwd. Scan ordered pages before slicing matches.
     matched = []
     seen = set()
+    loaded_ids = set()
+    if active and not archived:
+        loaded_page = await daemon.rpc('thread/loaded/list', {'limit': 10000})
+        loaded_ids.update(loaded_page.get('data', []))
     scan_cursor = None
     try:
         skip = int(base64.urlsafe_b64decode(cursor).decode()) if cursor else 0
@@ -272,6 +276,8 @@ async def threads(q: str = '', archived: bool = False, cursor: str | None = None
             if thread['id'] in seen:
                 continue
             seen.add(thread['id'])
+            if active and thread['id'] not in loaded_ids:
+                continue
             title = thread.get('name') or (thread.get('preview') or '').split('\n')[0]
             haystack = f"{title} {thread.get('cwd', '')}".casefold()
             if q.casefold() in haystack:
