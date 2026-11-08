@@ -74,6 +74,10 @@
             aria-label="Search sessions"
           />
         </div>
+        <div class="session-tabs" role="tablist" aria-label="Session filter">
+          <button id="recentTab" role="tab" aria-selected="true">Recent</button>
+          <button id="runningTab" role="tab" aria-selected="false">Active Sessions</button>
+        </div>
         <div class="list-bar">
           <span id="listLabel">RECENT ACTIVITY</span
           ><label class="archive"
@@ -139,7 +143,7 @@
               <button type="button" id="actions" aria-expanded="false">
                 ☷ Actions</button
               ><button type="button" id="slash" aria-label="Commands">/</button
-              ><span id="modeLabel" class="mode-label">Code</span
+              ><button type="button" id="modeLabel" class="mode-label" aria-label="Switch Plan or Code mode">Code</button
               ><span class="spacer"></span
               ><button type="button" id="stop" class="danger" hidden>
                 ■ Stop</button
