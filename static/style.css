@@ -371,6 +371,7 @@ hr {
 .session-stop { margin-top: 10px; min-height: 38px; font-size: 12px; }
 .session-close { position: absolute; right: 4px; top: 9px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; min-height: 36px; padding: 4px 10px; }
 .session { position: relative; padding-right: 44px; }
+.session-archive { margin-top: 9px; min-height: 36px; padding: 5px 10px; font-size: 12px; }
 .browser-footer {
   display: flex;
   justify-content: space-between;

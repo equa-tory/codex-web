@@ -249,11 +249,20 @@ async function loadSessions(more = false) {
         await api(`/threads/${thread.id}/close`, {});
         await loadSessions();
       }, "session-close");
-      close.title = "Close session (keeps its conversation)";
+      close.title = "Close and unload (archives the conversation)";
       close.setAttribute("aria-label", close.title);
       close.disabled = thread.status?.type === "active";
       close.addEventListener("click", (event) => event.stopPropagation());
       b.append(close);
+    } else if (!$("archived").checked) {
+      const archive = button("Archive", async () => {
+        if (thread.status?.type === "active") throw new Error("Stop the active turn before archiving this session.");
+        await api(`/threads/${thread.id}/archive`, {});
+        await loadSessions();
+      }, "session-archive");
+      archive.disabled = thread.status?.type === "active";
+      archive.addEventListener("click", (event) => event.stopPropagation());
+      b.append(archive);
     }
     $("sessions").append(b);
   }

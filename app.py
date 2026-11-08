@@ -400,7 +400,17 @@ async def close_thread(thread: str):
     meta = await daemon.metadata(thread)
     if meta.get('status', {}).get('type') == 'active':
         raise HTTPException(409, 'Stop the active turn before closing this session')
-    return await daemon.rpc('thread/unsubscribe', {'threadId': thread})
+    # The daemon has no unload/close RPC. Archiving preserves the transcript and
+    # removes the thread from thread/loaded/list, which releases its loaded state.
+    return await daemon.rpc('thread/archive', {'threadId': thread})
+
+
+@app.post('/api/threads/{thread}/archive')
+async def archive_thread(thread: str):
+    meta = await daemon.metadata(thread)
+    if meta.get('status', {}).get('type') == 'active':
+        raise HTTPException(409, 'Stop the active turn before archiving this session')
+    return await daemon.rpc('thread/archive', {'threadId': thread})
 
 
 class Restore(BaseModel):
