@@ -395,6 +395,14 @@ async def stop(thread: str):
     return await daemon.rpc('turn/interrupt', {'threadId': thread, 'turnId': active['id']})
 
 
+@app.post('/api/threads/{thread}/close')
+async def close_thread(thread: str):
+    meta = await daemon.metadata(thread)
+    if meta.get('status', {}).get('type') == 'active':
+        raise HTTPException(409, 'Stop the active turn before closing this session')
+    return await daemon.rpc('thread/unsubscribe', {'threadId': thread})
+
+
 class Restore(BaseModel):
     beforeTurnId: str
 

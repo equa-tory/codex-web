@@ -243,6 +243,18 @@ async function loadSessions(more = false) {
       stop.addEventListener("click", (event) => event.stopPropagation());
       b.append(stop);
     }
+    if (state.activeOnly) {
+      const close = button("×", async () => {
+        if (thread.status?.type === "active") return;
+        await api(`/threads/${thread.id}/close`, {});
+        await loadSessions();
+      }, "session-close");
+      close.title = "Close session (keeps its conversation)";
+      close.setAttribute("aria-label", close.title);
+      close.disabled = thread.status?.type === "active";
+      close.addEventListener("click", (event) => event.stopPropagation());
+      b.append(close);
+    }
     $("sessions").append(b);
   }
   if (!more && !result.data.length)

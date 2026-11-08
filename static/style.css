@@ -324,6 +324,9 @@ hr {
 .sessions {
   flex: 1;
 }
+.session-tabs { display: flex; gap: 8px; margin: 16px 0 2px; }
+.session-tabs button { flex: 1; font-size: 13px; }
+.session-tabs button[aria-selected="true"] { border-color: var(--mint); color: var(--mint); background: var(--raised); }
 .session {
   width: 100%;
   display: block;
@@ -365,6 +368,9 @@ hr {
 .session-state {
   color: var(--mint);
 }
+.session-stop { margin-top: 10px; min-height: 38px; font-size: 12px; }
+.session-close { position: absolute; right: 4px; top: 9px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; min-height: 36px; padding: 4px 10px; }
+.session { position: relative; padding-right: 44px; }
 .browser-footer {
   display: flex;
   justify-content: space-between;
@@ -554,6 +560,10 @@ hr {
   flex: 1;
 }
 .mode-label {
+  border: 0;
+  background: transparent;
+  min-height: 44px;
+  padding: 8px;
   color: var(--mint);
   font-size: 11px;
 }
